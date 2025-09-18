@@ -1,0 +1,137 @@
+@startuml
+actor Usuario
+participant Frontend
+participant "MS Autenticação" as Auth
+participant "MS Prontuario" as Prontuario
+database "DB Prontuario" as DBP
+
+== Fluxo: Cadastrar Tutor ==
+Usuario -> Frontend: Preenche dados tutor
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: POST /tutores {dados}
+Prontuario -> DBP: Inserir tutor
+DBP --> Prontuario: Confirma inserção
+Prontuario --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Deletar Tutor ==
+Usuario -> Frontend: Solicita exclusão do tutor
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: DELETE /tutores/{id}
+Prontuario -> DBP: Remove tutor
+DBP --> Prontuario: Confirma exclusão
+Prontuario --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Buscar Tutor ==
+Usuario -> Frontend: Informa ID ou Nome
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: GET /tutores/{id|nome}
+Prontuario -> DBP: Query tutor
+DBP --> Prontuario: Retorna dados tutor
+Prontuario --> Frontend: Retorna dados
+Frontend --> Usuario: Exibe dados tutor
+
+== Fluxo: Atualizar Tutor ==
+Usuario -> Frontend: Atualiza dados tutor
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: PUT /tutores/{id} {dados}
+Prontuario -> DBP: Update tutor
+DBP --> Prontuario: Confirma atualização
+Prontuario --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Cadastrar Animal ==
+Usuario -> Frontend: Preenche dados do animal
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: POST /animais {dados, tutorId}
+Prontuario -> DBP: Inserir animal vinculado ao tutor
+DBP --> Prontuario: Confirma inserção
+Prontuario --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Deletar Animal ==
+Usuario -> Frontend: Solicita exclusão do animal
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: DELETE /animais/{id}
+Prontuario -> DBP: Remove animal
+DBP --> Prontuario: Confirma exclusão
+Prontuario --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Buscar Animal (Exibir Histórico) ==
+Usuario -> Frontend: Solicita dados animal
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: GET /animais/{id|nome|tutor}
+Prontuario -> DBP: Query animal e histórico
+DBP --> Prontuario: Retorna dados
+Prontuario --> Frontend: Retorna histórico
+Frontend --> Usuario: Exibe histórico
+
+== Fluxo: Atualizar Animal (Alterar Status) ==
+Usuario -> Frontend: Atualiza status animal
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: PUT /animais/{id}/status {novoStatus}
+Prontuario -> DBP: Update status animal
+DBP --> Prontuario: Confirma atualização
+Prontuario --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Listar Todos os Animais ==
+Usuario -> Frontend: Solicita listagem completa
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: GET /animais
+Prontuario -> DBP: Query lista animais
+DBP --> Prontuario: Retorna lista
+Prontuario --> Frontend: Retorna lista
+Frontend --> Usuario: Exibe lista
+
+== Fluxo: Criar Prontuário ==
+Usuario -> Frontend: Preenche dados prontuário\nSeleciona animal
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: POST /prontuarios {dados, animalId}
+Prontuario -> DBP: Inserir prontuário vinculado ao animal
+DBP --> Prontuario: Confirma inserção
+Prontuario --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Atualizar Prontuário ==
+Usuario -> Frontend: Edita dados prontuário
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: PUT /prontuarios/{id} {dados}
+Prontuario -> DBP: Update prontuário
+DBP --> Prontuario: Confirma alteração
+Prontuario --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Buscar Prontuário ==
+Usuario -> Frontend: Solicita dados do prontuário
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: GET /prontuarios/{id|animal|tutor}
+Prontuario -> DBP: Query prontuário
+DBP --> Prontuario: Retorna dados
+Prontuario --> Frontend: Retorna prontuário
+Frontend --> Usuario: Exibe prontuário
+
+== Fluxo: Deletar Prontuário ==
+Usuario -> Frontend: Solicita exclusão do prontuário
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: DELETE /prontuarios/{id}
+Prontuario -> DBP: Remove prontuário
+DBP --> Prontuario: Confirma exclusão
+Prontuario --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+@enduml

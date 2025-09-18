@@ -1,0 +1,16 @@
+@startuml
+actor Usuario
+participant Frontend
+participant "MS Autenticação" as Auth
+participant "MS Prontuario" as Prontuario
+database "DB Prontuario" as DBP
+
+== Fluxo: Cadastrar Tutor ==
+Usuario -> Frontend: Preenche dados tutor
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Prontuario: POST /tutores {dados}
+Prontuario -> DBP: Inserir tutor
+DBP --> Prontuario: Confirma inserção
+Prontuario --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
