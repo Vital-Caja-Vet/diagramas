@@ -1,0 +1,93 @@
+@startuml
+title Microsserviço de Medicamentos
+
+actor Usuario
+participant Frontend
+participant "MS Autenticação" as Auth
+participant "MS Medicamentos" as Medicamentos
+participant "MS Prontuario" as Prontuario
+database "DB Medicamentos" as DBM
+
+== Fluxo: Listar Todos os Medicamentos ==
+Usuario -> Frontend: Solicita listagem de medicamentos
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Medicamentos: GET /medicamentos
+Medicamentos -> DBM: Query lista medicamentos
+DBM --> Medicamentos: Retorna lista
+Medicamentos --> Frontend: Retorna lista
+Frontend --> Usuario: Exibe lista de medicamentos
+
+== Fluxo: Cadastrar Nova Vacina/Medicamento ==
+Usuario -> Frontend: Preenche dados do medicamento
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Medicamentos: POST /medicamentos {dados}
+Medicamentos -> DBM: Inserir medicamento
+DBM --> Medicamentos: Confirma inserção
+Medicamentos --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Deletar Vacina/Medicamento ==
+Usuario -> Frontend: Solicita exclusão do medicamento
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Medicamentos: DELETE /medicamentos/{id}
+Medicamentos -> DBM: Remove medicamento
+DBM --> Medicamentos: Confirma exclusão
+Medicamentos --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Buscar Vacina/Medicamento ==
+Usuario -> Frontend: Informa ID, Nome ou Fabricante
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Medicamentos: GET /medicamentos/{id|nome|fabricante}
+Medicamentos -> DBM: Query medicamento
+DBM --> Medicamentos: Retorna dados
+Medicamentos --> Frontend: Retorna dados
+Frontend --> Usuario: Exibe dados medicamento
+
+== Fluxo: Atualizar Dados do Medicamento ==
+Usuario -> Frontend: Edita dados do medicamento
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Medicamentos: PUT /medicamentos/{id} {dados}
+Medicamentos -> DBM: Update medicamento
+DBM --> Medicamentos: Confirma alteração
+Medicamentos --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Adicionar Quantidade em Estoque (extends Atualizar Dados) ==
+Usuario -> Frontend: Solicita atualização de estoque
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Medicamentos: PUT /medicamentos/{id}/estoque {quantidade}
+Medicamentos -> DBM: Update estoque medicamento
+DBM --> Medicamentos: Confirma atualização
+Medicamentos --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Configurar Alertas de Estoque/Validade ==
+Usuario -> Frontend: Configura alertas
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Medicamentos: POST /alertas {dados}
+Medicamentos -> DBM: Inserir alerta
+DBM --> Medicamentos: Confirma inserção
+Medicamentos --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+== Fluxo: Registrar Aplicação de Vacina/Medicamento ==
+Usuario -> Frontend: Registra aplicação em animal
+Frontend -> Auth: Valida Token
+Auth --> Frontend: Token válido
+Frontend -> Medicamentos: POST /aplicacoes {animalId, medicamentoId, dados}
+Medicamentos -> DBM: Inserir aplicação
+DBM --> Medicamentos: Confirma inserção
+Medicamentos -> Prontuario: PUT /prontuarios/{animalId}/historico {aplicacao}
+Prontuario --> Medicamentos: Confirma atualização do prontuário
+Medicamentos --> Frontend: Retorna confirmação
+Frontend --> Usuario: Exibe mensagem sucesso
+
+@enduml
